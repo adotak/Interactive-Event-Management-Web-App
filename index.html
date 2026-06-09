@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Horizon - Event Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1>Event Horizon</h1>
+        <p>Manage Your Events Easily</p>
+    </header>
+
+    <div class="container">
+        <!-- SEARCH BAR -->
+        <div class="search-section">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-box" 
+                placeholder="Search events by name or date..."
+            >
+        </div>
+
+        <!-- FORM TO ADD NEW EVENT -->
+        <section class="form-section">
+            <h2>Add a New Event</h2>
+            <form id="eventForm">
+                <!-- Event Name Input -->
+                <div class="form-group">
+                    <label for="eventName">Event Name:</label>
+                    <input 
+                        type="text" 
+                        id="eventName" 
+                        placeholder="Enter event name"
+                        required
+                    >
+                </div>
+
+                <!-- Event Date Input -->
+                <div class="form-group">
+                    <label for="eventDate">Event Date:</label>
+                    <input 
+                        type="date" 
+                        id="eventDate"
+                        required
+                    >
+                </div>
+
+                <!-- Event Description Input -->
+                <div class="form-group">
+                    <label for="eventDescription">Event Description:</label>
+                    <textarea 
+                        id="eventDescription" 
+                        placeholder="Enter event description"
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-add">Add Event</button>
+            </form>
+
+            <!-- Warning message (appears when form is incomplete) -->
+            <div id="warningMessage" class="warning-message"></div>
+        </section>
+
+        <!-- EVENTS LIST SECTION -->
+        <section class="events-section">
+            <h2>Upcoming Events</h2>
+            <div id="eventsList" class="events-container">
+                <!-- Events will be added here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 Event Horizon. All rights reserved.</p>
+    </footer>
+
+    <!-- Link JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
