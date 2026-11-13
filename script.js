@@ -18,6 +18,22 @@ let events = [
     }
 ];
 
+const savedEvents = localStorage.getItem("eventHorizonEvents");
+if (savedEvents) {
+    try {
+        const parsedEvents = JSON.parse(savedEvents);
+        if (Array.isArray(parsedEvents)) {
+            events = parsedEvents;
+        }
+    } catch (error) {
+        console.error("Could not load saved events:", error);
+    }
+}
+
+function saveEvents() {
+    localStorage.setItem("eventHorizonEvents", JSON.stringify(events));
+}
+
 // ==================== GET HTML ELEMENTS ====================
 // These are variables that hold references to HTML elements we'll use in JavaScript
 const eventForm = document.getElementById("eventForm");
@@ -110,6 +126,7 @@ function addEvent(e) {
 
     // Sort events by date (ascending order - earliest first)
     sortEventsByDate();
+    saveEvents();
 
     // Clear the form fields
     eventForm.reset();
@@ -133,6 +150,7 @@ function sortEventsByDate() {
 function deleteEvent(index) {
     // Remove the event at the specified index from the events array
     events.splice(index, 1);
+    saveEvents();
 
     // Refresh the display to remove the deleted event
     displayEvents();
