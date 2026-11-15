@@ -46,19 +46,105 @@ const warningMessage = document.getElementById("warningMessage");
 const connectionStatus = document.getElementById("connectionStatus");
 const accessibilityInputs = document.querySelectorAll("input[name='accessibility']");
 const accessibilityFilters = document.querySelectorAll("input[name='accessibility-filter']");
+const languageSelect = document.getElementById("languageSelect");
+
+const translations = {
+    en: {
+        direction: "ltr",
+        subtitle: "Manage Your Events Easily",
+        languageLabel: "Language:",
+        searchPlaceholder: "Search events by name or date...",
+        searchLabel: "Search events by name or date",
+        addEventHeading: "Add a New Event",
+        eventNameLabel: "Event Name:",
+        eventNamePlaceholder: "Enter event name",
+        eventDateLabel: "Event Date:",
+        eventDescriptionLabel: "Event Description:",
+        eventDescriptionPlaceholder: "Enter event description",
+        accessibilityLegend: "Accessibility Features Available",
+        filterLegend: "Show events with all selected features",
+        addEventButton: "Add Event",
+        eventsHeading: "Find Accessible Events",
+        footerText: "© 2026 Event Horizon. All rights reserved.",
+        onlineStatus: "Online - your events are saved on this device.",
+        offlineStatus: "Offline - you can still view and manage your saved events.",
+        emptyEvents: "No events found. Add one to get started!",
+        noAccessibility: "No accessibility features listed.",
+        deleteEvent: "Delete Event",
+        validation: "⚠️ Please fill in all fields (Event Name, Date, and Description)"
+    },
+    ur: {
+        direction: "rtl",
+        subtitle: "اپنے پروگرام آسانی سے منظم کریں",
+        languageLabel: "زبان:",
+        searchPlaceholder: "نام یا تاریخ کے ذریعے پروگرام تلاش کریں...",
+        searchLabel: "نام یا تاریخ کے ذریعے پروگرام تلاش کریں",
+        addEventHeading: "نیا پروگرام شامل کریں",
+        eventNameLabel: "پروگرام کا نام:",
+        eventNamePlaceholder: "پروگرام کا نام درج کریں",
+        eventDateLabel: "پروگرام کی تاریخ:",
+        eventDescriptionLabel: "پروگرام کی تفصیل:",
+        eventDescriptionPlaceholder: "پروگرام کی تفصیل درج کریں",
+        accessibilityLegend: "دستیابی کی سہولیات",
+        filterLegend: "منتخب سہولیات رکھنے والے پروگرام دکھائیں",
+        addEventButton: "پروگرام شامل کریں",
+        eventsHeading: "قابل رسائی پروگرام تلاش کریں",
+        footerText: "© 2026 ایونٹ ہورائزن۔ جملہ حقوق محفوظ ہیں۔",
+        onlineStatus: "آن لائن - آپ کے پروگرام اس ڈیوائس پر محفوظ ہیں۔",
+        offlineStatus: "آف لائن - آپ اپنے محفوظ پروگرام دیکھ اور منظم کر سکتے ہیں۔",
+        emptyEvents: "کوئی پروگرام نہیں ملا۔ شروع کرنے کے لیے ایک پروگرام شامل کریں!",
+        noAccessibility: "دستیابی کی سہولیات درج نہیں ہیں۔",
+        deleteEvent: "پروگرام حذف کریں",
+        validation: "⚠️ براہ کرم تمام خانے مکمل کریں (نام، تاریخ اور تفصیل)"
+    }
+};
 
 const accessibilityLabels = {
-    "ramp": "Ramp / step-free access",
-    "sign-language": "Sign-language interpreter",
-    "captions": "Captions",
-    "quiet-room": "Quiet room",
-    "prayer-space": "Prayer space"
+    "ramp": { en: "Ramp / step-free access", ur: "ریمپ / بغیر سیڑھی رسائی" },
+    "sign-language": { en: "Sign-language interpreter", ur: "اشاروں کی زبان کا ترجمان" },
+    "captions": { en: "Captions", ur: "تحریری عنوانات" },
+    "quiet-room": { en: "Quiet room", ur: "پرسکون کمرہ" },
+    "prayer-space": { en: "Prayer space", ur: "نماز کی جگہ" }
 };
+
+let currentLanguage = localStorage.getItem("eventHorizonLanguage") || "en";
+
+function getTranslation(key) {
+    return translations[currentLanguage][key];
+}
+
+function applyLanguage() {
+    const translation = translations[currentLanguage];
+    document.documentElement.lang = currentLanguage === "ur" ? "ur" : "en";
+    document.documentElement.dir = translation.direction;
+    document.querySelector(".language-picker").firstChild.textContent = `${translation.languageLabel} `;
+    document.getElementById("appSubtitle").textContent = translation.subtitle;
+    document.getElementById("searchInput").placeholder = translation.searchPlaceholder;
+    document.getElementById("searchInput").setAttribute("aria-label", translation.searchLabel);
+    document.getElementById("addEventHeading").textContent = translation.addEventHeading;
+    document.getElementById("eventNameLabel").textContent = translation.eventNameLabel;
+    document.getElementById("eventName").placeholder = translation.eventNamePlaceholder;
+    document.getElementById("eventDateLabel").textContent = translation.eventDateLabel;
+    document.getElementById("eventDescriptionLabel").textContent = translation.eventDescriptionLabel;
+    document.getElementById("eventDescription").placeholder = translation.eventDescriptionPlaceholder;
+    document.getElementById("accessibilityLegend").textContent = translation.accessibilityLegend;
+    document.getElementById("filterLegend").textContent = translation.filterLegend;
+    document.getElementById("addEventButton").textContent = translation.addEventButton;
+    document.getElementById("eventsHeading").textContent = translation.eventsHeading;
+    document.getElementById("footerText").textContent = translation.footerText;
+    document.querySelectorAll("[data-accessibility-label]").forEach(label => {
+        const feature = label.dataset.accessibilityLabel;
+        label.textContent = accessibilityLabels[feature][currentLanguage];
+    });
+    languageSelect.value = currentLanguage;
+    updateConnectionStatus();
+    searchEvents();
+}
 
 function updateConnectionStatus() {
     connectionStatus.textContent = navigator.onLine
-        ? "Online - your events are saved on this device."
-        : "Offline - you can still view and manage your saved events.";
+        ? getTranslation("onlineStatus")
+        : getTranslation("offlineStatus");
     connectionStatus.classList.toggle("offline", !navigator.onLine);
 }
 
@@ -81,9 +167,12 @@ function displayEvents(eventsToShow = events) {
 
     // Check if there are any events to show
     if (eventsToShow.length === 0) {
-        eventsList.innerHTML = "<p style='text-align: center; color: #999;'>No events found. Add one to get started!</p>";
+        eventsList.textContent = getTranslation("emptyEvents");
+        eventsList.className = "events-container empty-events";
         return;
     }
+
+    eventsList.className = "events-container";
 
     // Loop through each event and create a card for it
     eventsToShow.forEach(event => {
@@ -104,9 +193,9 @@ function displayEvents(eventsToShow = events) {
         const eventAccessibility = Array.isArray(event.accessibility) ? event.accessibility : [];
         const accessibilityMarkup = eventAccessibility.length > 0
             ? `<div class="accessibility-badges" aria-label="Accessibility features">
-                ${eventAccessibility.map(feature => `<span class="accessibility-badge">${accessibilityLabels[feature] || feature}</span>`).join("")}
+                ${eventAccessibility.map(feature => `<span class="accessibility-badge">${accessibilityLabels[feature]?.[currentLanguage] || feature}</span>`).join("")}
             </div>`
-            : "<p class='no-accessibility'>No accessibility features listed.</p>";
+            : `<p class="no-accessibility">${getTranslation("noAccessibility")}</p>`;
         const eventIndex = events.indexOf(event);
 
         // Create the HTML content for the event card
@@ -115,7 +204,7 @@ function displayEvents(eventsToShow = events) {
             <p class="event-date">📅 ${formatDate(event.date)}</p>
             <p class="event-description">${event.description}</p>
             ${accessibilityMarkup}
-            <button class="btn-delete" onclick="deleteEvent(${eventIndex})">Delete Event</button>
+            <button class="btn-delete" onclick="deleteEvent(${eventIndex})">${getTranslation("deleteEvent")}</button>
         `;
 
         // Add the card to the page
@@ -147,7 +236,7 @@ function addEvent(e) {
     // FORM VALIDATION: Check if all fields are filled in
     if (!name || !date || !description) {
         // Show warning message
-        warningMessage.textContent = "⚠️ Please fill in all fields (Event Name, Date, and Description)";
+        warningMessage.textContent = getTranslation("validation");
         warningMessage.classList.add("show");
         return;
     }
@@ -226,6 +315,11 @@ eventForm.addEventListener("submit", addEvent);
 // When user types in the search box
 searchInput.addEventListener("input", searchEvents);
 accessibilityFilters.forEach(filter => filter.addEventListener("change", searchEvents));
+languageSelect.addEventListener("change", () => {
+    currentLanguage = languageSelect.value;
+    localStorage.setItem("eventHorizonLanguage", currentLanguage);
+    applyLanguage();
+});
 
 window.addEventListener("online", updateConnectionStatus);
 window.addEventListener("offline", updateConnectionStatus);
@@ -233,6 +327,5 @@ window.addEventListener("offline", updateConnectionStatus);
 // ==================== INITIALIZE (Run when page loads) ====================
 // This code runs when the page first loads
 sortEventsByDate();
-displayEvents();
-updateConnectionStatus();
+applyLanguage();
 registerServiceWorker();

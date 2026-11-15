@@ -12,7 +12,13 @@
     <!-- HEADER -->
     <header class="header">
         <h1>Event Horizon</h1>
-        <p>Manage Your Events Easily</p>
+        <p id="appSubtitle">Manage Your Events Easily</p>
+        <label class="language-picker" for="languageSelect">Language:
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="ur">اردو</option>
+            </select>
+        </label>
     </header>
 
     <div class="container">
@@ -25,16 +31,17 @@
                 id="searchInput" 
                 class="search-box" 
                 placeholder="Search events by name or date..."
+                aria-label="Search events by name or date"
             >
         </div>
 
         <!-- FORM TO ADD NEW EVENT -->
         <section class="form-section">
-            <h2>Add a New Event</h2>
+            <h2 id="addEventHeading">Add a New Event</h2>
             <form id="eventForm">
                 <!-- Event Name Input -->
                 <div class="form-group">
-                    <label for="eventName">Event Name:</label>
+                    <label for="eventName" id="eventNameLabel">Event Name:</label>
                     <input 
                         type="text" 
                         id="eventName" 
@@ -45,7 +52,7 @@
 
                 <!-- Event Date Input -->
                 <div class="form-group">
-                    <label for="eventDate">Event Date:</label>
+                    <label for="eventDate" id="eventDateLabel">Event Date:</label>
                     <input 
                         type="date" 
                         id="eventDate"
@@ -55,7 +62,7 @@
 
                 <!-- Event Description Input -->
                 <div class="form-group">
-                    <label for="eventDescription">Event Description:</label>
+                    <label for="eventDescription" id="eventDescriptionLabel">Event Description:</label>
                     <textarea 
                         id="eventDescription" 
                         placeholder="Enter event description"
@@ -65,16 +72,16 @@
                 </div>
 
                 <fieldset class="accessibility-options">
-                    <legend>Accessibility Features Available</legend>
-                    <label><input type="checkbox" name="accessibility" value="ramp"> Ramp / step-free access</label>
-                    <label><input type="checkbox" name="accessibility" value="sign-language"> Sign-language interpreter</label>
-                    <label><input type="checkbox" name="accessibility" value="captions"> Captions</label>
-                    <label><input type="checkbox" name="accessibility" value="quiet-room"> Quiet room</label>
-                    <label><input type="checkbox" name="accessibility" value="prayer-space"> Prayer space</label>
+                    <legend id="accessibilityLegend">Accessibility Features Available</legend>
+                    <label><input type="checkbox" name="accessibility" value="ramp"><span data-accessibility-label="ramp">Ramp / step-free access</span></label>
+                    <label><input type="checkbox" name="accessibility" value="sign-language"><span data-accessibility-label="sign-language">Sign-language interpreter</span></label>
+                    <label><input type="checkbox" name="accessibility" value="captions"><span data-accessibility-label="captions">Captions</span></label>
+                    <label><input type="checkbox" name="accessibility" value="quiet-room"><span data-accessibility-label="quiet-room">Quiet room</span></label>
+                    <label><input type="checkbox" name="accessibility" value="prayer-space"><span data-accessibility-label="prayer-space">Prayer space</span></label>
                 </fieldset>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn-add">Add Event</button>
+                <button type="submit" class="btn-add" id="addEventButton">Add Event</button>
             </form>
 
             <!-- Warning message (appears when form is incomplete) -->
@@ -83,14 +90,14 @@
 
         <!-- EVENTS LIST SECTION -->
         <section class="events-section">
-            <h2>Find Accessible Events</h2>
+            <h2 id="eventsHeading">Find Accessible Events</h2>
             <fieldset class="accessibility-filter">
-                <legend>Show events with all selected features</legend>
-                <label><input type="checkbox" name="accessibility-filter" value="ramp"> Ramp / step-free access</label>
-                <label><input type="checkbox" name="accessibility-filter" value="sign-language"> Sign-language interpreter</label>
-                <label><input type="checkbox" name="accessibility-filter" value="captions"> Captions</label>
-                <label><input type="checkbox" name="accessibility-filter" value="quiet-room"> Quiet room</label>
-                <label><input type="checkbox" name="accessibility-filter" value="prayer-space"> Prayer space</label>
+                <legend id="filterLegend">Show events with all selected features</legend>
+                <label><input type="checkbox" name="accessibility-filter" value="ramp"><span data-accessibility-label="ramp">Ramp / step-free access</span></label>
+                <label><input type="checkbox" name="accessibility-filter" value="sign-language"><span data-accessibility-label="sign-language">Sign-language interpreter</span></label>
+                <label><input type="checkbox" name="accessibility-filter" value="captions"><span data-accessibility-label="captions">Captions</span></label>
+                <label><input type="checkbox" name="accessibility-filter" value="quiet-room"><span data-accessibility-label="quiet-room">Quiet room</span></label>
+                <label><input type="checkbox" name="accessibility-filter" value="prayer-space"><span data-accessibility-label="prayer-space">Prayer space</span></label>
             </fieldset>
             <div id="eventsList" class="events-container">
                 <!-- Events will be added here by JavaScript -->
@@ -100,7 +107,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>&copy; 2026 Event Horizon. All rights reserved.</p>
+        <p id="footerText">&copy; 2026 Event Horizon. All rights reserved.</p>
     </footer>
 
     <!-- Link JavaScript file -->

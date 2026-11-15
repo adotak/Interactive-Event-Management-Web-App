@@ -31,6 +31,21 @@ body {
     opacity: 0.9;
 }
 
+.language-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.language-picker select {
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 /* ==================== CONTAINER ==================== */
 .container {
     max-width: 1000px;
@@ -230,6 +245,12 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
+}
+
+.events-container.empty-events {
+    display: block;
+    text-align: center;
+    color: #999;
 }
 
 /* ==================== EVENT CARD ==================== */
