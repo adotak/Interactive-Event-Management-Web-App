@@ -38,6 +38,22 @@ body {
     padding: 0 20px;
 }
 
+/* ==================== CONNECTION STATUS ==================== */
+.connection-status {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.connection-status.offline {
+    color: #8a4b08;
+    background-color: #fff3e0;
+    border-left-color: #ef6c00;
+}
+
 /* ==================== SEARCH BAR ==================== */
 .search-section {
     margin-bottom: 30px;

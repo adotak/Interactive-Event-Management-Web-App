@@ -43,6 +43,25 @@ const eventDescriptionInput = document.getElementById("eventDescription");
 const eventsList = document.getElementById("eventsList");
 const searchInput = document.getElementById("searchInput");
 const warningMessage = document.getElementById("warningMessage");
+const connectionStatus = document.getElementById("connectionStatus");
+
+function updateConnectionStatus() {
+    connectionStatus.textContent = navigator.onLine
+        ? "Online - your events are saved on this device."
+        : "Offline - you can still view and manage your saved events.";
+    connectionStatus.classList.toggle("offline", !navigator.onLine);
+}
+
+function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) {
+        return;
+    }
+
+    navigator.serviceWorker.register("./service-worker.js")
+        .catch(error => {
+            console.error("Could not register the service worker:", error);
+        });
+}
 
 // ==================== DISPLAY EVENTS FUNCTION ====================
 // This function creates and shows all events on the page
@@ -189,8 +208,12 @@ eventForm.addEventListener("submit", addEvent);
 // When user types in the search box
 searchInput.addEventListener("input", searchEvents);
 
+window.addEventListener("online", updateConnectionStatus);
+window.addEventListener("offline", updateConnectionStatus);
+
 // ==================== INITIALIZE (Run when page loads) ====================
 // This code runs when the page first loads
-displayEvents();
 sortEventsByDate();
 displayEvents();
+updateConnectionStatus();
+registerServiceWorker();
