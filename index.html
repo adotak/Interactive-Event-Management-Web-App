@@ -80,6 +80,28 @@
                     <label><input type="checkbox" name="accessibility" value="prayer-space"><span data-accessibility-label="prayer-space">Prayer space</span></label>
                 </fieldset>
 
+                <fieldset class="volunteer-options">
+                    <legend id="volunteerLegend">Volunteer Shift (Optional)</legend>
+                    <div class="form-group">
+                        <label for="volunteerRole" id="volunteerRoleLabel">Role:</label>
+                        <input type="text" id="volunteerRole" placeholder="e.g. Registration desk">
+                    </div>
+                    <div class="form-group">
+                        <label for="volunteerCount" id="volunteerCountLabel">Volunteers needed:</label>
+                        <input type="number" id="volunteerCount" min="1" max="100" placeholder="e.g. 3">
+                    </div>
+                    <div class="shift-times">
+                        <div class="form-group">
+                            <label for="volunteerStart" id="volunteerStartLabel">Start:</label>
+                            <input type="time" id="volunteerStart">
+                        </div>
+                        <div class="form-group">
+                            <label for="volunteerEnd" id="volunteerEndLabel">End:</label>
+                            <input type="time" id="volunteerEnd">
+                        </div>
+                    </div>
+                </fieldset>
+
                 <!-- Submit Button -->
                 <button type="submit" class="btn-add" id="addEventButton">Add Event</button>
             </form>
