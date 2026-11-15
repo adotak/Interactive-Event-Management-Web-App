@@ -1,0 +1,721 @@
+Understanding script.js
+=======================
+
+This project is a small client-side event management application.
+
+- index.html creates the page structure.
+- style.css controls the visual appearance.
+- script.js makes the page interactive.
+
+The user can:
+
+1. See existing events.
+2. Add a new event.
+3. Search events by name or date.
+4. Delete an event.
+5. Keep events saved in the browser using localStorage.
+
+
+1. The main idea: data, display, and user actions
+--------------------------------------------------
+
+Interactive JavaScript applications usually have three parts:
+
+DATA
+----
+
+The events are stored in an array of objects:
+
+let events = [
+    {
+        name: "Tech Conference 2026",
+        date: "2026-07-15",
+        description: "Annual technology conference featuring talks from industry leaders."
+    }
+];
+
+An array is a collection of values:
+
+let fruits = ["apple", "banana", "orange"];
+
+An object stores related information using property names:
+
+let event = {
+    name: "Tech Conference",
+    date: "2026-07-15",
+    description: "A technology conference"
+};
+
+Object properties are accessed with dot notation:
+
+event.name
+event.date
+event.description
+
+In this project:
+
+events[0].name
+
+means: get the first event and read its name.
+
+The events variable uses let because the array can later be replaced with
+saved data:
+
+events = parsedEvents;
+
+The array can also be modified with methods such as push, splice, and sort.
+
+
+DISPLAY
+-------
+
+The event cards are placed inside this HTML element from index.html:
+
+<div id="eventsList" class="events-container"></div>
+
+JavaScript finds that element with:
+
+const eventsList = document.getElementById("eventsList");
+
+JavaScript then creates event cards and adds them to the page.
+
+
+USER ACTIONS
+------------
+
+The application listens for user actions:
+
+eventForm.addEventListener("submit", addEvent);
+searchInput.addEventListener("input", searchEvents);
+
+This means:
+
+- When the form is submitted, run addEvent.
+- Whenever the user types in the search box, run searchEvents.
+
+This is called event-driven programming. The program waits for something to
+happen and then executes a function.
+
+
+2. Initial event data
+---------------------
+
+At the start of script.js, three sample events are created:
+
+let events = [
+    {
+        name: "Tech Conference 2026",
+        date: "2026-07-15",
+        description: "Annual technology conference featuring talks from industry leaders."
+    },
+    {
+        name: "Summer Workshop",
+        date: "2026-06-20",
+        description: "Hands-on workshop covering web development best practices."
+    },
+    {
+        name: "Networking Meetup",
+        date: "2026-06-10",
+        description: "Connect with other developers and professionals in the tech industry."
+    }
+];
+
+The data structure looks like this:
+
+events
+  event 0
+    name
+    date
+    description
+  event 1
+    name
+    date
+    description
+  event 2
+    name
+    date
+    description
+
+
+3. Loading saved events from localStorage
+-----------------------------------------
+
+The browser provides localStorage for saving small amounts of data:
+
+const savedEvents = localStorage.getItem("eventHorizonEvents");
+
+localStorage stores key-value pairs. The key in this application is:
+
+eventHorizonEvents
+
+localStorage can only store strings. It cannot directly store arrays or
+objects. Therefore, the application uses JSON:
+
+JSON.stringify(events)
+
+converts an array into a string.
+
+JSON.parse(savedEvents)
+
+converts the string back into an array.
+
+The code checks whether saved data exists:
+
+if (savedEvents) {
+
+It then tries to parse the data:
+
+try {
+    const parsedEvents = JSON.parse(savedEvents);
+    if (Array.isArray(parsedEvents)) {
+        events = parsedEvents;
+    }
+} catch (error) {
+    console.error("Could not load saved events:", error);
+}
+
+try...catch protects the application if the saved data is invalid or
+corrupted. Array.isArray makes sure the loaded value is actually an array
+before replacing the default data.
+
+
+4. Saving events
+----------------
+
+The saveEvents function is:
+
+function saveEvents() {
+    localStorage.setItem("eventHorizonEvents", JSON.stringify(events));
+}
+
+This function:
+
+1. Takes the current events array.
+2. Converts it to a JSON string.
+3. Saves it in the browser.
+
+It is called after adding and deleting events.
+
+
+5. Selecting HTML elements
+--------------------------
+
+These lines connect JavaScript to the HTML:
+
+const eventForm = document.getElementById("eventForm");
+const eventNameInput = document.getElementById("eventName");
+const eventDateInput = document.getElementById("eventDate");
+const eventDescriptionInput = document.getElementById("eventDescription");
+const eventsList = document.getElementById("eventsList");
+const searchInput = document.getElementById("searchInput");
+const warningMessage = document.getElementById("warningMessage");
+
+For example, index.html contains:
+
+<input type="text" id="eventName">
+
+JavaScript finds it with:
+
+const eventNameInput = document.getElementById("eventName");
+
+After that, JavaScript can read its value:
+
+eventNameInput.value
+
+It can change text:
+
+warningMessage.textContent = "Please fill in all fields";
+
+It can add or remove CSS classes:
+
+warningMessage.classList.add("show");
+warningMessage.classList.remove("show");
+
+
+6. The displayEvents function
+-----------------------------
+
+The function starts with:
+
+function displayEvents(eventsToShow = events) {
+
+eventsToShow is a parameter. Its default value is events.
+
+Therefore:
+
+displayEvents();
+
+displays all events, while:
+
+displayEvents(filteredEvents);
+
+displays only the filtered events.
+
+First, existing cards are cleared:
+
+eventsList.innerHTML = "";
+
+This prevents old cards from remaining when the page is redrawn.
+
+If there are no events:
+
+if (eventsToShow.length === 0) {
+    eventsList.innerHTML = "<p>No events found. Add one to get started!</p>";
+    return;
+}
+
+length tells us how many items are in the array. return stops the function
+early. This is called a guard clause.
+
+
+7. Looping through events with forEach
+---------------------------------------
+
+The function loops through every event:
+
+eventsToShow.forEach((event, index) => {
+
+forEach runs a function once for each array item.
+
+- event is the current event object.
+- index is the current position in the array.
+
+For each event, a new div is created:
+
+const eventCard = document.createElement("div");
+eventCard.className = "event-card";
+
+This creates a div and gives it the CSS class event-card.
+
+
+8. Checking whether an event is in the past
+-------------------------------------------
+
+The event date is converted to a Date object:
+
+const eventDate = new Date(event.date);
+
+The current date is also created:
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+Setting today to midnight makes date comparisons more consistent.
+
+The event is marked as past if:
+
+if (eventDate < today) {
+    eventCard.classList.add("past-event");
+}
+
+JavaScript decides whether the event is past. CSS decides how the
+past-event class looks.
+
+
+9. Template literals and generated HTML
+----------------------------------------
+
+The card content uses a template literal:
+
+eventCard.innerHTML = `
+    <h3>${event.name}</h3>
+    <p class="event-date">${formatDate(event.date)}</p>
+    <p class="event-description">${event.description}</p>
+    <button onclick="deleteEvent(${index})">Delete Event</button>
+`;
+
+Template literals use backticks. Values can be inserted with:
+
+${value}
+
+For example:
+
+const name = "Alice";
+const message = `Hello, ${name}!`;
+
+The result is:
+
+Hello, Alice!
+
+Finally, the card is added to the page:
+
+eventsList.appendChild(eventCard);
+
+
+10. Formatting dates
+--------------------
+
+The formatDate function is:
+
+function formatDate(dateString) {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", options);
+}
+
+It changes a value such as:
+
+2026-07-15
+
+into:
+
+July 15, 2026
+
+The options object controls the output format.
+
+
+11. Adding an event
+-------------------
+
+The function receives the browser event:
+
+function addEvent(e) {
+
+Normally, submitting a form refreshes the page. This is prevented with:
+
+e.preventDefault();
+
+The form values are then read:
+
+const name = eventNameInput.value.trim();
+const date = eventDateInput.value;
+const description = eventDescriptionInput.value.trim();
+
+value gets what the user typed. trim removes spaces from the beginning and
+end of a string.
+
+For example:
+
+"   Conference   ".trim()
+
+becomes:
+
+"Conference"
+
+
+12. Form validation
+-------------------
+
+The form is checked with:
+
+if (!name || !date || !description) {
+
+The ! operator means "not". An empty string is falsy, so this condition
+means that at least one field is empty.
+
+The warning is shown:
+
+warningMessage.textContent =
+    "Please fill in all fields (Event Name, Date, and Description)";
+warningMessage.classList.add("show");
+return;
+
+return stops the function, so the invalid event is not added.
+
+If all fields are filled, the warning is hidden:
+
+warningMessage.classList.remove("show");
+
+
+13. Creating and adding the new event
+-------------------------------------
+
+A new object is created:
+
+const newEvent = {
+    name: name,
+    date: date,
+    description: description
+};
+
+It is added to the array:
+
+events.push(newEvent);
+
+push adds an item to the end of an array.
+
+The rest of the process is:
+
+sortEventsByDate();
+saveEvents();
+eventForm.reset();
+displayEvents();
+
+This means:
+
+1. Sort the events.
+2. Save them.
+3. Clear the form.
+4. Redraw the event cards.
+
+
+14. Sorting events by date
+--------------------------
+
+The sorting function is:
+
+function sortEventsByDate() {
+    events.sort((event1, event2) => {
+        const date1 = new Date(event1.date);
+        const date2 = new Date(event2.date);
+        return date1 - date2;
+    });
+}
+
+sort rearranges an array. The callback compares two events.
+
+- A negative result means event1 comes first.
+- A positive result means event2 comes first.
+- Zero means their order does not matter.
+
+Because dates can be subtracted, the earliest date is placed first.
+
+
+15. Deleting an event
+---------------------
+
+The delete function is:
+
+function deleteEvent(index) {
+    events.splice(index, 1);
+    saveEvents();
+    displayEvents();
+}
+
+splice removes items from an array.
+
+array.splice(startIndex, numberOfItems)
+
+Therefore:
+
+events.splice(index, 1);
+
+means: remove one event starting at this index.
+
+The array is then saved and the page is redrawn.
+
+
+16. Searching events
+--------------------
+
+The search function begins with:
+
+const searchTerm = searchInput.value.toLowerCase().trim();
+
+toLowerCase makes the search case-insensitive. trim removes extra spaces.
+
+If the search box is empty:
+
+if (searchTerm === "") {
+    displayEvents();
+    return;
+}
+
+All events are shown.
+
+Otherwise, filter creates a new array:
+
+const filteredEvents = events.filter(event => {
+    const nameMatch = event.name.toLowerCase().includes(searchTerm);
+    const dateMatch = event.date.includes(searchTerm);
+    return nameMatch || dateMatch;
+});
+
+filter keeps only items that pass a condition.
+
+includes checks whether one string contains another string.
+
+The || operator means OR. An event is displayed when the search term
+matches either the event name or the event date.
+
+The filtered results are displayed:
+
+displayEvents(filteredEvents);
+
+
+17. Event listeners
+-------------------
+
+The form listener is:
+
+eventForm.addEventListener("submit", addEvent);
+
+When the form is submitted, addEvent runs.
+
+The search listener is:
+
+searchInput.addEventListener("input", searchEvents);
+
+Whenever the user types in the search box, searchEvents runs. This creates
+live search behavior.
+
+
+18. Initializing the application
+--------------------------------
+
+At the bottom of script.js, the application initially displays the events.
+
+The current code is:
+
+displayEvents();
+sortEventsByDate();
+displayEvents();
+
+The first display happens before sorting, and the second display happens
+after sorting. The first call is unnecessary.
+
+A cleaner version is:
+
+sortEventsByDate();
+displayEvents();
+
+This sorts the events before displaying them and avoids rendering twice.
+
+
+19. Complete application lifecycle
+----------------------------------
+
+When the page opens:
+
+1. The browser loads index.html.
+2. The browser loads style.css.
+3. The browser loads script.js.
+4. JavaScript creates default events.
+5. JavaScript checks localStorage.
+6. Saved events replace default events if valid.
+7. JavaScript finds the HTML elements.
+8. JavaScript registers event listeners.
+9. JavaScript sorts and displays the events.
+
+When the user adds an event:
+
+1. The user fills in the form.
+2. The user clicks Add Event.
+3. The submit event occurs.
+4. addEvent runs.
+5. Form values are read.
+6. Values are validated.
+7. A new object is created.
+8. The object is added to events.
+9. Events are sorted.
+10. Events are saved.
+11. The form is reset.
+12. Event cards are redrawn.
+
+When the user searches:
+
+1. The user types.
+2. The input event occurs.
+3. searchEvents runs.
+4. Events are filtered.
+5. Matching events are displayed.
+
+When the user deletes:
+
+1. The user clicks Delete Event.
+2. deleteEvent(index) runs.
+3. The event is removed.
+4. The new array is saved.
+5. Event cards are redrawn.
+
+
+20. Important issue: deleting while searching
+----------------------------------------------
+
+The button currently uses:
+
+onclick="deleteEvent(${index})"
+
+The index is from eventsToShow.forEach. When displaying all events, this
+usually works. During a search, however, index belongs to filteredEvents,
+not necessarily to the original events array.
+
+Example:
+
+Original events:
+0. Conference
+1. Workshop
+2. Meetup
+
+Search result:
+0. Meetup
+
+The search result has index 0, but Meetup has index 2 in the original array.
+Calling deleteEvent(0) could delete Conference instead.
+
+This teaches an important lesson:
+
+An index is meaningful only relative to the array it belongs to.
+
+A stronger implementation would identify events with a unique ID or find
+the original index before deleting.
+
+
+21. Important issue: innerHTML and user input
+---------------------------------------------
+
+The application places user input into innerHTML:
+
+eventCard.innerHTML = `
+    <h3>${event.name}</h3>
+    <p>${event.description}</p>
+`;
+
+This is convenient but can be unsafe if a user enters HTML or script-like
+content. In production code, user input should normally be placed using
+textContent:
+
+const title = document.createElement("h3");
+title.textContent = event.name;
+
+textContent treats the value as plain text instead of interpreting it as
+HTML.
+
+
+22. JavaScript concepts learned from this file
+----------------------------------------------
+
+- Variables: let events and const eventForm
+- Arrays: events = [...]
+- Objects: { name, date, description }
+- Functions: function saveEvents() {}
+- Parameters: function displayEvents(eventsToShow)
+- Default parameters: eventsToShow = events
+- Arrow functions: event => { ... }
+- Array methods: push, splice, sort, filter, forEach
+- DOM manipulation: document.createElement()
+- DOM selection: document.getElementById()
+- Browser events: submit and input
+- Form handling: eventForm.reset()
+- String methods: trim, toLowerCase, includes
+- Dates: new Date()
+- JSON: JSON.parse() and JSON.stringify()
+- Browser storage: localStorage
+- Error handling: try...catch
+- Conditions: if
+- Template literals: `${event.name}`
+- CSS classes: classList.add() and classList.remove()
+
+
+23. The most important mental model
+-----------------------------------
+
+Remember this pattern:
+
+data -> modify data -> save data -> render data
+
+For this project:
+
+events array
+    ->
+add, delete, sort, or filter
+    ->
+save to localStorage when data changes
+    ->
+display event cards
+
+The events array is the main source of truth. The page is generated from
+that array every time displayEvents runs.
+
+This pattern is common in modern web development and forms the foundation
+of frameworks such as React, Vue, and Angular.
