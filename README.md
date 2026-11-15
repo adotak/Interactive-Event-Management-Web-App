@@ -10,6 +10,13 @@ so the event manager can load without an internet connection.
 Events are stored in the browser's `localStorage`, so adding and deleting
 events continues to work offline on the same device and browser.
 
+## Accessibility filters
+
+Organizers can mark events with ramp access, a sign-language interpreter,
+captions, a quiet room, and/or a prayer space. Attendees can select one or
+more of these features to show only events that provide all selected options.
+These settings are stored with each event in `localStorage`.
+
 To test the PWA, serve this folder from `localhost` or HTTPS. Service workers
 are disabled when opening `index.html` directly with a `file://` URL. After
 the first successful load, switch the browser to offline mode and reload the

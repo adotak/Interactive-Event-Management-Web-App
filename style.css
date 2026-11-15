@@ -120,6 +120,62 @@ body {
     box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
 }
 
+.accessibility-options,
+.accessibility-filter {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.accessibility-options legend,
+.accessibility-filter legend {
+    padding: 0 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.accessibility-options label,
+.accessibility-filter label {
+    display: block;
+    margin-top: 8px;
+    color: #555;
+    cursor: pointer;
+}
+
+.accessibility-options input,
+.accessibility-filter input {
+    margin-right: 8px;
+}
+
+.accessibility-filter {
+    background: white;
+    margin-bottom: 20px;
+}
+
+.accessibility-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.accessibility-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 14px;
+    padding: 4px 9px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.no-accessibility {
+    color: #777;
+    font-size: 13px;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
 /* Add Button */
 .btn-add {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

@@ -64,6 +64,15 @@
                     ></textarea>
                 </div>
 
+                <fieldset class="accessibility-options">
+                    <legend>Accessibility Features Available</legend>
+                    <label><input type="checkbox" name="accessibility" value="ramp"> Ramp / step-free access</label>
+                    <label><input type="checkbox" name="accessibility" value="sign-language"> Sign-language interpreter</label>
+                    <label><input type="checkbox" name="accessibility" value="captions"> Captions</label>
+                    <label><input type="checkbox" name="accessibility" value="quiet-room"> Quiet room</label>
+                    <label><input type="checkbox" name="accessibility" value="prayer-space"> Prayer space</label>
+                </fieldset>
+
                 <!-- Submit Button -->
                 <button type="submit" class="btn-add">Add Event</button>
             </form>
@@ -74,7 +83,15 @@
 
         <!-- EVENTS LIST SECTION -->
         <section class="events-section">
-            <h2>Upcoming Events</h2>
+            <h2>Find Accessible Events</h2>
+            <fieldset class="accessibility-filter">
+                <legend>Show events with all selected features</legend>
+                <label><input type="checkbox" name="accessibility-filter" value="ramp"> Ramp / step-free access</label>
+                <label><input type="checkbox" name="accessibility-filter" value="sign-language"> Sign-language interpreter</label>
+                <label><input type="checkbox" name="accessibility-filter" value="captions"> Captions</label>
+                <label><input type="checkbox" name="accessibility-filter" value="quiet-room"> Quiet room</label>
+                <label><input type="checkbox" name="accessibility-filter" value="prayer-space"> Prayer space</label>
+            </fieldset>
             <div id="eventsList" class="events-container">
                 <!-- Events will be added here by JavaScript -->
             </div>

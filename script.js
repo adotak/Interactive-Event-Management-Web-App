@@ -44,6 +44,16 @@ const eventsList = document.getElementById("eventsList");
 const searchInput = document.getElementById("searchInput");
 const warningMessage = document.getElementById("warningMessage");
 const connectionStatus = document.getElementById("connectionStatus");
+const accessibilityInputs = document.querySelectorAll("input[name='accessibility']");
+const accessibilityFilters = document.querySelectorAll("input[name='accessibility-filter']");
+
+const accessibilityLabels = {
+    "ramp": "Ramp / step-free access",
+    "sign-language": "Sign-language interpreter",
+    "captions": "Captions",
+    "quiet-room": "Quiet room",
+    "prayer-space": "Prayer space"
+};
 
 function updateConnectionStatus() {
     connectionStatus.textContent = navigator.onLine
@@ -76,7 +86,7 @@ function displayEvents(eventsToShow = events) {
     }
 
     // Loop through each event and create a card for it
-    eventsToShow.forEach((event, index) => {
+    eventsToShow.forEach(event => {
         // Create a div for the event card
         const eventCard = document.createElement("div");
         eventCard.className = "event-card";
@@ -91,12 +101,21 @@ function displayEvents(eventsToShow = events) {
             eventCard.classList.add("past-event");
         }
 
+        const eventAccessibility = Array.isArray(event.accessibility) ? event.accessibility : [];
+        const accessibilityMarkup = eventAccessibility.length > 0
+            ? `<div class="accessibility-badges" aria-label="Accessibility features">
+                ${eventAccessibility.map(feature => `<span class="accessibility-badge">${accessibilityLabels[feature] || feature}</span>`).join("")}
+            </div>`
+            : "<p class='no-accessibility'>No accessibility features listed.</p>";
+        const eventIndex = events.indexOf(event);
+
         // Create the HTML content for the event card
         eventCard.innerHTML = `
             <h3>${event.name}</h3>
             <p class="event-date">📅 ${formatDate(event.date)}</p>
             <p class="event-description">${event.description}</p>
-            <button class="btn-delete" onclick="deleteEvent(${index})">Delete Event</button>
+            ${accessibilityMarkup}
+            <button class="btn-delete" onclick="deleteEvent(${eventIndex})">Delete Event</button>
         `;
 
         // Add the card to the page
@@ -121,6 +140,9 @@ function addEvent(e) {
     const name = eventNameInput.value.trim();
     const date = eventDateInput.value;
     const description = eventDescriptionInput.value.trim();
+    const accessibility = Array.from(accessibilityInputs)
+        .filter(input => input.checked)
+        .map(input => input.value);
 
     // FORM VALIDATION: Check if all fields are filled in
     if (!name || !date || !description) {
@@ -137,7 +159,8 @@ function addEvent(e) {
     const newEvent = {
         name: name,
         date: date,
-        description: description
+        description: description,
+        accessibility: accessibility
     };
 
     // Add the new event to the events array
@@ -179,23 +202,18 @@ function deleteEvent(index) {
 // This function filters events by name or date as the user types
 function searchEvents() {
     const searchTerm = searchInput.value.toLowerCase().trim();
-
-    if (searchTerm === "") {
-        // If search box is empty, show all events
-        displayEvents();
-        return;
-    }
-
-    // Filter events that match the search term
+    const selectedFeatures = Array.from(accessibilityFilters)
+        .filter(input => input.checked)
+        .map(input => input.value);
     const filteredEvents = events.filter(event => {
-        // Check if the search term is in the event name or date
         const nameMatch = event.name.toLowerCase().includes(searchTerm);
         const dateMatch = event.date.includes(searchTerm);
+        const eventAccessibility = Array.isArray(event.accessibility) ? event.accessibility : [];
+        const accessibilityMatch = selectedFeatures.every(feature => eventAccessibility.includes(feature));
 
-        return nameMatch || dateMatch; // Return true if either matches
+        return (searchTerm === "" || nameMatch || dateMatch) && accessibilityMatch;
     });
 
-    // Display only the filtered events
     displayEvents(filteredEvents);
 }
 
@@ -207,6 +225,7 @@ eventForm.addEventListener("submit", addEvent);
 
 // When user types in the search box
 searchInput.addEventListener("input", searchEvents);
+accessibilityFilters.forEach(filter => filter.addEventListener("change", searchEvents));
 
 window.addEventListener("online", updateConnectionStatus);
 window.addEventListener("offline", updateConnectionStatus);

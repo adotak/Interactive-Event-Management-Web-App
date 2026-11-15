@@ -1,4 +1,4 @@
-const CACHE_NAME = "event-horizon-v1";
+const CACHE_NAME = "event-horizon-v2";
 const APP_SHELL = [
     "./",
     "./index.html",
