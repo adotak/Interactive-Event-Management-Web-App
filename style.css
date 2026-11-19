@@ -191,6 +191,74 @@ body {
     margin-bottom: 15px;
 }
 
+.volunteer-options {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.volunteer-options legend {
+    padding: 0 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.shift-times {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.volunteer-shift {
+    display: grid;
+    gap: 6px;
+    background-color: #f3f0ff;
+    border-left: 4px solid #764ba2;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.volunteer-shift span {
+    color: #555;
+}
+
+.volunteer-signup {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.volunteer-signup input {
+    min-width: 0;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-signup {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-signup:hover {
+    background-color: #1b5e20;
+}
+
+.shift-full,
+.no-volunteers {
+    color: #777;
+    font-size: 13px;
+    font-style: italic;
+}
+
 /* Add Button */
 .btn-add {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -363,5 +431,11 @@ body {
 
     .form-section {
         padding: 15px;
+    }
+
+    .shift-times,
+    .volunteer-signup {
+        grid-template-columns: 1fr;
+        display: grid;
     }
 }

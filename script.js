@@ -47,6 +47,10 @@ const connectionStatus = document.getElementById("connectionStatus");
 const accessibilityInputs = document.querySelectorAll("input[name='accessibility']");
 const accessibilityFilters = document.querySelectorAll("input[name='accessibility-filter']");
 const languageSelect = document.getElementById("languageSelect");
+const volunteerRoleInput = document.getElementById("volunteerRole");
+const volunteerCountInput = document.getElementById("volunteerCount");
+const volunteerStartInput = document.getElementById("volunteerStart");
+const volunteerEndInput = document.getElementById("volunteerEnd");
 
 const translations = {
     en: {
@@ -63,6 +67,13 @@ const translations = {
         eventDescriptionPlaceholder: "Enter event description",
         accessibilityLegend: "Accessibility Features Available",
         filterLegend: "Show events with all selected features",
+        volunteerLegend: "Volunteer Shift (Optional)",
+        volunteerRoleLabel: "Role:",
+        volunteerRolePlaceholder: "e.g. Registration desk",
+        volunteerCountLabel: "Volunteers needed:",
+        volunteerCountPlaceholder: "e.g. 3",
+        volunteerStartLabel: "Start:",
+        volunteerEndLabel: "End:",
         addEventButton: "Add Event",
         eventsHeading: "Find Accessible Events",
         footerText: "© 2026 Event Horizon. All rights reserved.",
@@ -71,6 +82,14 @@ const translations = {
         emptyEvents: "No events found. Add one to get started!",
         noAccessibility: "No accessibility features listed.",
         deleteEvent: "Delete Event",
+        shiftDetails: "Volunteer shift",
+        volunteersNeeded: "volunteers needed",
+        volunteersRemaining: "openings remaining",
+        noVolunteers: "No volunteer shift listed.",
+        volunteerNamePlaceholder: "Your name",
+        signUp: "Sign up",
+        signedUp: "Signed up",
+        volunteerNameRequired: "Please enter your name before signing up.",
         validation: "⚠️ Please fill in all fields (Event Name, Date, and Description)"
     },
     ur: {
@@ -87,6 +106,13 @@ const translations = {
         eventDescriptionPlaceholder: "پروگرام کی تفصیل درج کریں",
         accessibilityLegend: "دستیابی کی سہولیات",
         filterLegend: "منتخب سہولیات رکھنے والے پروگرام دکھائیں",
+        volunteerLegend: "رضاکاروں کی شفٹ (اختیاری)",
+        volunteerRoleLabel: "ذمہ داری:",
+        volunteerRolePlaceholder: "مثلاً رجسٹریشن ڈیسک",
+        volunteerCountLabel: "ضروری رضاکار:",
+        volunteerCountPlaceholder: "مثلاً 3",
+        volunteerStartLabel: "آغاز:",
+        volunteerEndLabel: "اختتام:",
         addEventButton: "پروگرام شامل کریں",
         eventsHeading: "قابل رسائی پروگرام تلاش کریں",
         footerText: "© 2026 ایونٹ ہورائزن۔ جملہ حقوق محفوظ ہیں۔",
@@ -95,6 +121,14 @@ const translations = {
         emptyEvents: "کوئی پروگرام نہیں ملا۔ شروع کرنے کے لیے ایک پروگرام شامل کریں!",
         noAccessibility: "دستیابی کی سہولیات درج نہیں ہیں۔",
         deleteEvent: "پروگرام حذف کریں",
+        shiftDetails: "رضاکاروں کی شفٹ",
+        volunteersNeeded: "رضاکار درکار ہیں",
+        volunteersRemaining: "جگہیں باقی ہیں",
+        noVolunteers: "رضاکاروں کی شفٹ درج نہیں ہے۔",
+        volunteerNamePlaceholder: "آپ کا نام",
+        signUp: "رجسٹر کریں",
+        signedUp: "رجسٹریشن مکمل",
+        volunteerNameRequired: "رجسٹر کرنے سے پہلے اپنا نام درج کریں۔",
         validation: "⚠️ براہ کرم تمام خانے مکمل کریں (نام، تاریخ اور تفصیل)"
     }
 };
@@ -129,6 +163,13 @@ function applyLanguage() {
     document.getElementById("eventDescription").placeholder = translation.eventDescriptionPlaceholder;
     document.getElementById("accessibilityLegend").textContent = translation.accessibilityLegend;
     document.getElementById("filterLegend").textContent = translation.filterLegend;
+    document.getElementById("volunteerLegend").textContent = translation.volunteerLegend;
+    document.getElementById("volunteerRoleLabel").textContent = translation.volunteerRoleLabel;
+    document.getElementById("volunteerRole").placeholder = translation.volunteerRolePlaceholder;
+    document.getElementById("volunteerCountLabel").textContent = translation.volunteerCountLabel;
+    document.getElementById("volunteerCount").placeholder = translation.volunteerCountPlaceholder;
+    document.getElementById("volunteerStartLabel").textContent = translation.volunteerStartLabel;
+    document.getElementById("volunteerEndLabel").textContent = translation.volunteerEndLabel;
     document.getElementById("addEventButton").textContent = translation.addEventButton;
     document.getElementById("eventsHeading").textContent = translation.eventsHeading;
     document.getElementById("footerText").textContent = translation.footerText;
@@ -157,6 +198,32 @@ function registerServiceWorker() {
         .catch(error => {
             console.error("Could not register the service worker:", error);
         });
+}
+
+function getVolunteerMarkup(event, eventIndex) {
+        if (!event.volunteerShift || !event.volunteerShift.role || !event.volunteerShift.required) {
+            return `<p class="no-volunteers">${getTranslation("noVolunteers")}</p>`;
+        }
+
+        const shift = event.volunteerShift;
+        const signups = Array.isArray(shift.signups) ? shift.signups : [];
+        const remaining = Math.max(shift.required - signups.length, 0);
+        const time = shift.start && shift.end ? `${shift.start} - ${shift.end}` : "";
+        const signupButton = remaining > 0
+            ? `<div class="volunteer-signup">
+                <input id="volunteer-name-${eventIndex}" type="text" placeholder="${getTranslation("volunteerNamePlaceholder")}" aria-label="${getTranslation("volunteerNamePlaceholder")}">
+                <button class="btn-signup" onclick="signUpForShift(${eventIndex})">${getTranslation("signUp")}</button>
+            </div>`
+            : `<p class="shift-full">${getTranslation("signedUp")}</p>`;
+
+        return `
+            <div class="volunteer-shift">
+                <strong>${getTranslation("shiftDetails")}: ${shift.role}</strong>
+                <span>${time}</span>
+                <span>${remaining} ${getTranslation("volunteersRemaining")} (${shift.required} ${getTranslation("volunteersNeeded")})</span>
+                ${signupButton}
+            </div>
+        `;
 }
 
 // ==================== DISPLAY EVENTS FUNCTION ====================
@@ -204,6 +271,7 @@ function displayEvents(eventsToShow = events) {
             <p class="event-date">📅 ${formatDate(event.date)}</p>
             <p class="event-description">${event.description}</p>
             ${accessibilityMarkup}
+            ${getVolunteerMarkup(event, eventIndex)}
             <button class="btn-delete" onclick="deleteEvent(${eventIndex})">${getTranslation("deleteEvent")}</button>
         `;
 
@@ -232,6 +300,17 @@ function addEvent(e) {
     const accessibility = Array.from(accessibilityInputs)
         .filter(input => input.checked)
         .map(input => input.value);
+    const volunteerRole = volunteerRoleInput.value.trim();
+    const volunteerCount = Number.parseInt(volunteerCountInput.value, 10);
+    const volunteerShift = volunteerRole && volunteerCount > 0
+        ? {
+            role: volunteerRole,
+            required: volunteerCount,
+            start: volunteerStartInput.value,
+            end: volunteerEndInput.value,
+            signups: []
+        }
+        : null;
 
     // FORM VALIDATION: Check if all fields are filled in
     if (!name || !date || !description) {
@@ -249,7 +328,8 @@ function addEvent(e) {
         name: name,
         date: date,
         description: description,
-        accessibility: accessibility
+        accessibility: accessibility,
+        volunteerShift: volunteerShift
     };
 
     // Add the new event to the events array
@@ -285,6 +365,34 @@ function deleteEvent(index) {
 
     // Refresh the display to remove the deleted event
     displayEvents();
+}
+
+function signUpForShift(index) {
+    const nameInput = document.getElementById(`volunteer-name-${index}`);
+    const name = nameInput.value.trim();
+    if (!name) {
+        warningMessage.textContent = getTranslation("volunteerNameRequired");
+        warningMessage.classList.add("show");
+        return;
+    }
+
+    const event = events[index];
+    if (!event || !event.volunteerShift) {
+        return;
+    }
+
+    const signups = Array.isArray(event.volunteerShift.signups)
+        ? event.volunteerShift.signups
+        : [];
+    if (signups.length >= event.volunteerShift.required) {
+        return;
+    }
+
+    signups.push(name);
+    event.volunteerShift.signups = signups;
+    warningMessage.classList.remove("show");
+    saveEvents();
+    searchEvents();
 }
 
 // ==================== SEARCH FUNCTION ====================
